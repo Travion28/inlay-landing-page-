@@ -1,119 +1,72 @@
-import { Zap, Brain, Save, Focus } from "lucide-react";
 import { motion } from "framer-motion";
 
-interface FeatureCardProps {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-  featured?: boolean;
-  index: number;
-}
-
-function FeatureCard({
-  icon,
-  title,
-  description,
-  featured,
-  index,
-}: FeatureCardProps) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -8 }}
-      transition={{ delay: index * 0.1, duration: 0.5 }}
-      viewport={{ once: true }}
-      className={`group relative p-8 rounded-2xl backdrop-blur-sm transition-all duration-300 cursor-pointer ${
-        featured
-          ? "bg-white/[0.07] border-2 border-white/20 hover:border-white/30 hover:shadow-[0_0_40px_rgba(255,255,255,0.15)]"
-          : "bg-white/[0.03] border border-white/10 hover:border-white/20 hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]"
-      }`}
-    >
-      {/* Glow effect on hover */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-500/0 to-purple-500/0 group-hover:from-blue-500/10 group-hover:to-purple-500/10 transition-all duration-300" />
-
-      <div className="relative space-y-4">
-        {/* Icon */}
-        <motion.div
-          whileHover={{ rotate: 5, scale: 1.1 }}
-          transition={{ duration: 0.2 }}
-          className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-white/80 group-hover:text-white transition-colors"
-        >
-          {icon}
-        </motion.div>
-
-        {/* Title */}
-        <h3 className="font-['Space_Grotesk'] text-xl font-semibold text-white">
-          {title}
-        </h3>
-
-        {/* Description */}
-        <p className="text-white/60 leading-relaxed font-['Inter']">
-          {description}
-        </p>
-      </div>
-    </motion.div>
-  );
-}
+const features = [
+  {
+    title: "Mark a blank",
+    description: "Type / anywhere in your note to mark something you want completed.",
+    symbol: "/",
+  },
+  {
+    title: "Trigger completion",
+    description: "Hit // to instantly fill the blank with context-aware text.",
+    symbol: "//",
+  },
+  {
+    title: "Keep writing",
+    description: "No popups, no menus. Completions appear inline. Stay in flow.",
+    symbol: "→",
+  },
+];
 
 export function Features() {
-  const features = [
-    {
-      icon: <Zap className="w-6 h-6" />,
-      title: "Inline Completion",
-      description: "Smart suggestions appear right where you type.",
-      featured: false,
-    },
-    {
-      icon: <Brain className="w-6 h-6" />,
-      title: "Context-Aware",
-      description: "Completions follow the sentence around the blank.",
-      featured: true,
-    },
-    {
-      icon: <Save className="w-6 h-6" />,
-      title: "Auto-Save",
-      description: "Never lose a thought again.",
-      featured: false,
-    },
-    {
-      icon: <Focus className="w-6 h-6" />,
-      title: "Focus Mode",
-      description: "Minimal distractions while you write.",
-      featured: false,
-    },
-  ];
-
   return (
-    <section id="features" className="relative py-24 sm:py-32">
-      {/* Subtle background glow */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-blue-500/5 rounded-full blur-[100px]" />
+    <section className="relative py-24 sm:py-32 px-6">
+      {/* Subtle divider */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-12 h-[1px] bg-black/10" />
 
-      <div className="relative max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        {/* Section title */}
+      <div className="max-w-3xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mb-16"
+          className="text-center mb-20"
         >
-          <h2 className="font-['Space_Grotesk'] text-4xl sm:text-5xl font-bold text-white tracking-tight">
-            What You Get
+          <h2 className="font-['Space_Grotesk'] text-3xl sm:text-4xl font-semibold tracking-tight text-black/90 mb-4">
+            How it works
           </h2>
+          <p className="text-black/40 text-base sm:text-lg max-w-md mx-auto">
+            Three keystrokes. That's it.
+          </p>
         </motion.div>
 
-        {/* Feature cards grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="space-y-16 sm:space-y-20">
           {features.map((feature, index) => (
-            <FeatureCard
+            <motion.div
               key={feature.title}
-              icon={feature.icon}
-              title={feature.title}
-              description={feature.description}
-              featured={feature.featured}
-              index={index}
-            />
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              className="flex items-start gap-6 sm:gap-8"
+            >
+              {/* Symbol */}
+              <div className="flex-shrink-0 w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-black/[0.03] border border-black/[0.06] flex items-center justify-center">
+                <span className="font-mono text-lg sm:text-xl font-medium text-black/50">
+                  {feature.symbol}
+                </span>
+              </div>
+
+              {/* Text */}
+              <div>
+                <h3 className="font-['Space_Grotesk'] text-lg sm:text-xl font-semibold text-black/85 mb-1.5">
+                  {feature.title}
+                </h3>
+                <p className="text-black/40 text-sm sm:text-base leading-relaxed max-w-sm">
+                  {feature.description}
+                </p>
+              </div>
+            </motion.div>
           ))}
         </div>
       </div>
