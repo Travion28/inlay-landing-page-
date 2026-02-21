@@ -39,13 +39,13 @@ export function Hero() {
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-wrap gap-4">
-              <Button variant="primary" size="lg" onClick={() => scrollToSection('download')}>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button variant="primary" size="lg" onClick={() => scrollToSection('download')} className="w-full sm:w-auto">
                 <Download className="w-5 h-5" />
                 Download Beta
               </Button>
               
-              <Button variant="secondary" size="lg" onClick={() => scrollToSection('how-it-works')}>
+              <Button variant="secondary" size="lg" onClick={() => scrollToSection('how-it-works')} className="w-full sm:w-auto">
                 <Play className="w-5 h-5" />
                 See it work
               </Button>
