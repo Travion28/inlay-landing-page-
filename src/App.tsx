@@ -3,6 +3,7 @@ import { Hero } from "./components/Hero";
 import { Features } from "./components/Features";
 import { HowItWorks } from "./components/HowItWorks";
 import { FinalCTA } from "./components/FinalCTA";
+import { Footer } from "./components/Footer";
 import { BackToTop } from "./components/BackToTop";
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
       <Features />
       <HowItWorks />
       <FinalCTA />
+      <Footer />
       <BackToTop />
     </div>
   );
