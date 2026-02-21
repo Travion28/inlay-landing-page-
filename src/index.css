@@ -1,0 +1,13 @@
+﻿@import "./styles/fonts.css";
+@import "./styles/tailwind.css";
+@import "./styles/theme.css";
+
+@layer utilities {
+  .bg-gradient-radial {
+    background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
