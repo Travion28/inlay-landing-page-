@@ -9,14 +9,28 @@
 
 html {
   scroll-behavior: smooth;
+  --card-ratio: 3 / 5;
+}
+
+@media (min-width: 640px) {
+  html { --card-ratio: 3 / 4; }
+}
+@media (min-width: 768px) {
+  html { --card-ratio: 3 / 4; }
+}
+@media (min-width: 1024px) {
+  html { --card-ratio: 4 / 5; }
+}
+@media (min-width: 1280px) {
+  html { --card-ratio: 4 / 5; }
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #ffffff;
-  color: #111;
+  background: #0a0a0a;
+  color: #e5e5e5;
   overflow-x: hidden;
 }
 
@@ -27,7 +41,7 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 3px;
 }
 
