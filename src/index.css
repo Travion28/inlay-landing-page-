@@ -9,20 +9,20 @@
 
 html {
   scroll-behavior: smooth;
-  --card-ratio: 3 / 5;
+  --card-ratio: 9 / 16;
 }
 
 @media (min-width: 640px) {
-  html { --card-ratio: 3 / 4; }
+  html { --card-ratio: 9 / 16; }
 }
 @media (min-width: 768px) {
-  html { --card-ratio: 3 / 4; }
+  html { --card-ratio: 3 / 5; }
 }
 @media (min-width: 1024px) {
-  html { --card-ratio: 4 / 5; }
+  html { --card-ratio: 3 / 5; }
 }
 @media (min-width: 1280px) {
-  html { --card-ratio: 4 / 5; }
+  html { --card-ratio: 3 / 5; }
 }
 
 body {
