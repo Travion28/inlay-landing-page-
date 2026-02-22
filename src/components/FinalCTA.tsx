@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export function FinalCTA() {
   return (
-    <section className="relative py-28 sm:py-36 px-6 bg-neutral-950">
+    <section className="relative py-28 sm:py-36 px-6">
       <div className="relative max-w-2xl mx-auto text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

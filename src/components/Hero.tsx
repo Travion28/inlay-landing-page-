@@ -1,10 +1,14 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { HeroAnimation, BACKGROUND_IMAGES } from "./HeroAnimation";
 
-export function Hero() {
-  const [bgIndex, setBgIndex] = useState(0);
-
+export function Hero({
+  bgIndex,
+  onBgChange,
+}: {
+  bgIndex: number;
+  onBgChange: (index: number) => void;
+}) {
   // Preload all background images
   useEffect(() => {
     BACKGROUND_IMAGES.forEach((src) => {
@@ -15,22 +19,6 @@ export function Hero() {
 
   return (
     <section className="relative min-h-[100svh] flex flex-col items-center px-6 sm:px-10 overflow-hidden">
-      {/* Ambient blurred background — image mood spills out behind the card */}
-      {BACKGROUND_IMAGES.map((src, i) => (
-        <div
-          key={`bg-${src}`}
-          className="absolute inset-0 transition-opacity duration-[2000ms] ease-in-out scale-110"
-          style={{
-            backgroundImage: `url(${src})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            filter: "blur(60px) saturate(1.3)",
-            opacity: i === bgIndex ? 1 : 0,
-          }}
-        />
-      ))}
-      {/* Dark scrim over the blurred bg */}
-      <div className="absolute inset-0 bg-black/60" />
 
       {/* Top — wordmark + headline */}
       <div className="relative z-10 pt-16 sm:pt-20 pb-8 sm:pb-10 text-center">
@@ -65,22 +53,31 @@ export function Hero() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5 }}
-          className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white/[0.1] backdrop-blur-xl border border-white/[0.12] text-[14px] font-medium text-white/70 hover:text-white/90 hover:bg-white/[0.16] transition-all duration-300"
+          className="group inline-flex items-center gap-3.5 px-6 py-3 rounded-full bg-white/[0.1] backdrop-blur-xl border border-white/[0.12] hover:bg-white/[0.16] transition-all duration-300"
         >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="opacity-60"
-          >
-            <path d="M12 19V5M5 12l7-7 7 7" />
-          </svg>
-          Join the iOS Beta
+          <div className="w-9 h-9 rounded-xl bg-white/[0.1] border border-white/[0.08] flex items-center justify-center flex-shrink-0">
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="white"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="opacity-50"
+            >
+              <path d="M12 19V5M5 12l7-7 7 7" />
+            </svg>
+          </div>
+          <div className="flex flex-col leading-tight text-left">
+            <span className="text-[15px] font-semibold text-white/75 group-hover:text-white/90 transition-colors">
+              Join the iOS Beta
+            </span>
+            <span className="text-[12px] text-white/30 font-medium">
+              Download with Apple TestFlight
+            </span>
+          </div>
         </motion.a>
       </div>
 
@@ -112,7 +109,7 @@ export function Hero() {
           {/* Note — full width at bottom */}
           <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 lg:p-6">
             <div className="w-full">
-              <HeroAnimation onExampleChange={setBgIndex} />
+              <HeroAnimation onExampleChange={onBgChange} />
             </div>
           </div>
         </div>
