@@ -12,13 +12,13 @@ interface Paragraph {
 }
 
 interface Example {
+  title: string;
   paragraphs: Paragraph[];
 }
 
-// Each example has 2 paragraphs. Each paragraph ends with //.
-// Type paragraph 1 → // fills p1 blanks → type paragraph 2 → // fills p2 blanks
 const EXAMPLES: Example[] = [
   {
+    title: "Tesla Earnings Call Notes",
     paragraphs: [
       {
         parts: [
@@ -53,6 +53,7 @@ const EXAMPLES: Example[] = [
     ],
   },
   {
+    title: "Super Bowl LIX Recap",
     paragraphs: [
       {
         parts: [
@@ -65,7 +66,7 @@ const EXAMPLES: Example[] = [
           { type: "text", value: ", beating the " },
           { type: "blank", value: "/", completed: "Chiefs" },
           { type: "text", value: " " },
-          { type: "blank", value: "/", completed: "40–22" },
+          { type: "blank", value: "/", completed: "40\u201322" },
           { type: "text", value: " at the Superdome in " },
           { type: "blank", value: "//", completed: "New Orleans" },
           { type: "text", value: "." },
@@ -79,9 +80,7 @@ const EXAMPLES: Example[] = [
           { type: "blank", value: "/", completed: "7 years" },
           { type: "text", value: ". Hurts threw for " },
           { type: "blank", value: "/", completed: "2 TDs" },
-          { type: "text", value: ", ran for another, and finished with a " },
-          { type: "blank", value: "/", completed: "126.4" },
-          { type: "text", value: " passer rating in the " },
+          { type: "text", value: " and ran for another in the " },
           { type: "blank", value: "//", completed: "win" },
           { type: "text", value: "." },
         ],
@@ -89,6 +88,7 @@ const EXAMPLES: Example[] = [
     ],
   },
   {
+    title: "Starship Flight 7",
     paragraphs: [
       {
         parts: [
@@ -120,72 +120,6 @@ const EXAMPLES: Example[] = [
       },
     ],
   },
-  {
-    paragraphs: [
-      {
-        parts: [
-          { type: "text", value: "Apple released the " },
-          { type: "blank", value: "/", completed: "M4" },
-          { type: "text", value: " MacBook Pro starting at " },
-          { type: "blank", value: "/", completed: "$1,599" },
-          { type: "text", value: " with " },
-          { type: "blank", value: "/", completed: "24GB" },
-          { type: "text", value: " unified memory and a " },
-          { type: "blank", value: "/", completed: "10-core" },
-          { type: "text", value: " CPU. Battery lasts up to " },
-          { type: "blank", value: "//", completed: "24 hours" },
-          { type: "text", value: "." },
-        ],
-      },
-      {
-        parts: [
-          { type: "text", value: "It ships with a " },
-          { type: "blank", value: "/", completed: "Liquid Retina XDR" },
-          { type: "text", value: " display, optional " },
-          { type: "blank", value: "/", completed: "nano-texture" },
-          { type: "text", value: " glass, and Thunderbolt " },
-          { type: "blank", value: "/", completed: "5" },
-          { type: "text", value: " ports at " },
-          { type: "blank", value: "//", completed: "120 Gb/s" },
-          { type: "text", value: "." },
-        ],
-      },
-    ],
-  },
-  {
-    paragraphs: [
-      {
-        parts: [
-          { type: "text", value: "Taylor Swift's " },
-          { type: "blank", value: "/", completed: "Eras Tour" },
-          { type: "text", value: " grossed over " },
-          { type: "blank", value: "/", completed: "$2.2B" },
-          { type: "text", value: " across " },
-          { type: "blank", value: "/", completed: "149 shows" },
-          { type: "text", value: " spanning " },
-          { type: "blank", value: "/", completed: "5 continents" },
-          { type: "text", value: ", becoming the highest-grossing tour " },
-          { type: "blank", value: "//", completed: "ever" },
-          { type: "text", value: "." },
-        ],
-      },
-      {
-        parts: [
-          { type: "text", value: "It wrapped " },
-          { type: "blank", value: "/", completed: "Dec 8, 2024" },
-          { type: "text", value: " in " },
-          { type: "blank", value: "/", completed: "Vancouver" },
-          { type: "text", value: ". The concert film debuted on " },
-          { type: "blank", value: "/", completed: "Disney+" },
-          { type: "text", value: " and drew " },
-          { type: "blank", value: "/", completed: "28M" },
-          { type: "text", value: " streams " },
-          { type: "blank", value: "//", completed: "week one" },
-          { type: "text", value: "." },
-        ],
-      },
-    ],
-  },
 ];
 
 function getParagraphText(paragraph: Paragraph): string {
@@ -193,14 +127,14 @@ function getParagraphText(paragraph: Paragraph): string {
 }
 
 const TIMING = {
-  typing: 25,
-  fillDelay: 300,
-  blankStagger: 0.2,
-  blankDuration: 0.4,
-  doneHold: 2000,
+  typing: 55,
+  typingJitter: 45,
+  fillDelay: 400,
+  blankStagger: 0.25,
+  blankDuration: 0.5,
+  doneHold: 3000,
 };
 
-// Phases: type p1 → fill p1 + type p2 simultaneously → fill p2 → done
 type Phase = "typing-p1" | "typing-p2" | "filled-p2" | "done";
 
 export function HeroAnimation() {
@@ -211,29 +145,31 @@ export function HeroAnimation() {
   const [p2FillProgress, setP2FillProgress] = useState(-1);
 
   const example = EXAMPLES[exampleIndex];
-  const currentParagraph = phase === "typing-p1" ? example.paragraphs[0] : example.paragraphs[1];
+  const currentParagraph =
+    phase === "typing-p1" ? example.paragraphs[0] : example.paragraphs[1];
   const currentText = getParagraphText(currentParagraph);
 
   const nextExample = useCallback(() => {
-    setExampleIndex((i) => (i + 1) % EXAMPLES.length);
+    const next = (exampleIndex + 1) % EXAMPLES.length;
+    setExampleIndex(next);
     setPhase("typing-p1");
     setCharIndex(0);
     setP1FillProgress(-1);
     setP2FillProgress(-1);
-  }, []);
+  }, [exampleIndex]);
 
-  // Typing
+  // Main typing
   useEffect(() => {
     if (phase !== "typing-p1" && phase !== "typing-p2") return;
+
     if (charIndex < currentText.length) {
       const timer = setTimeout(
         () => setCharIndex((c) => c + 1),
-        TIMING.typing + Math.random() * 25
+        TIMING.typing + Math.random() * TIMING.typingJitter
       );
       return () => clearTimeout(timer);
     } else {
       if (phase === "typing-p1") {
-        // Start filling p1 and typing p2 at the same time
         const timer = setTimeout(() => {
           setP1FillProgress(0);
           setCharIndex(0);
@@ -241,7 +177,6 @@ export function HeroAnimation() {
         }, 0);
         return () => clearTimeout(timer);
       } else {
-        // Start filling p2
         const timer = setTimeout(() => {
           setP2FillProgress(0);
           setPhase("filled-p2");
@@ -253,7 +188,9 @@ export function HeroAnimation() {
 
   // Sequentially reveal p1 blanks
   useEffect(() => {
-    const blankCount = example.paragraphs[0].parts.filter((p) => p.type === "blank").length;
+    const blankCount = example.paragraphs[0].parts.filter(
+      (p) => p.type === "blank"
+    ).length;
     if (p1FillProgress < 0 || p1FillProgress >= blankCount) return;
     const timer = setTimeout(
       () => setP1FillProgress((p) => p + 1),
@@ -264,7 +201,9 @@ export function HeroAnimation() {
 
   // Sequentially reveal p2 blanks
   useEffect(() => {
-    const blankCount = example.paragraphs[1].parts.filter((p) => p.type === "blank").length;
+    const blankCount = example.paragraphs[1].parts.filter(
+      (p) => p.type === "blank"
+    ).length;
     if (p2FillProgress < 0 || p2FillProgress >= blankCount) return;
     const timer = setTimeout(
       () => setP2FillProgress((p) => p + 1),
@@ -273,19 +212,25 @@ export function HeroAnimation() {
     return () => clearTimeout(timer);
   }, [p2FillProgress, example]);
 
-  // After filling p2 → hold (wait for fill animation to finish)
+  // After filling p2 → hold
   useEffect(() => {
     if (phase !== "filled-p2") return;
-    const blankCount = example.paragraphs[1].parts.filter((p) => p.type === "blank").length;
-    const fillDuration = blankCount * TIMING.blankStagger * 1000 + TIMING.blankDuration * 1000;
-    const timer = setTimeout(() => setPhase("done"), fillDuration + TIMING.doneHold);
+    const blankCount = example.paragraphs[1].parts.filter(
+      (p) => p.type === "blank"
+    ).length;
+    const fillDuration =
+      blankCount * TIMING.blankStagger * 1000 + TIMING.blankDuration * 1000;
+    const timer = setTimeout(
+      () => setPhase("done"),
+      fillDuration + TIMING.doneHold
+    );
     return () => clearTimeout(timer);
   }, [phase, example]);
 
   // Done → next
   useEffect(() => {
     if (phase !== "done") return;
-    const timer = setTimeout(nextExample, 200);
+    const timer = setTimeout(nextExample, 400);
     return () => clearTimeout(timer);
   }, [phase, nextExample]);
 
@@ -304,56 +249,76 @@ export function HeroAnimation() {
       const visibleText = part.value.slice(0, visibleEnd - partStart);
 
       if (part.type === "text") {
-        elements.push(<span key={i}>{visibleText}</span>);
+        elements.push(
+          <span key={i} className="text-white/90">
+            {visibleText}
+          </span>
+        );
       } else {
         elements.push(
-          <span key={i} className="text-blue-400/70">{visibleText}</span>
+          <span key={i} className="text-white/40">
+            {visibleText}
+          </span>
         );
       }
-
       pos = partEnd;
     }
 
     elements.push(
-      <span key="cursor" className="cursor-blink text-black/30">|</span>
+      <span key="cursor" className="cursor-blink text-white/50">
+        |
+      </span>
     );
 
     return elements;
   };
 
-  const renderFilling = (paragraph: Paragraph, fillProgress: number, keyPrefix: string) => {
+  const renderFilling = (
+    paragraph: Paragraph,
+    fillProgress: number,
+    keyPrefix: string
+  ) => {
     const elements: React.ReactNode[] = [];
     let blankIndex = 0;
 
     for (let i = 0; i < paragraph.parts.length; i++) {
       const part = paragraph.parts[i];
       if (part.type === "text") {
-        elements.push(<span key={i}>{part.value}</span>);
+        elements.push(
+          <span key={i} className="text-white/90">
+            {part.value}
+          </span>
+        );
       } else {
         if (blankIndex < fillProgress) {
-          // Already revealed — show completed text
           elements.push(
-            <span key={`${keyPrefix}-${i}`} className="text-black/90 font-medium">
+            <span
+              key={`${keyPrefix}-${i}`}
+              className="text-white font-medium"
+            >
               {part.completed}
             </span>
           );
         } else if (blankIndex === fillProgress) {
-          // Currently animating in
           elements.push(
             <motion.span
               key={`${keyPrefix}-${i}`}
               initial={{ opacity: 0, filter: "blur(6px)" }}
               animate={{ opacity: 1, filter: "blur(0px)" }}
-              transition={{ duration: TIMING.blankDuration, ease: [0.25, 0.1, 0.25, 1] }}
-              className="text-black/90 font-medium"
+              transition={{
+                duration: TIMING.blankDuration,
+                ease: [0.25, 0.1, 0.25, 1],
+              }}
+              className="text-white font-medium"
             >
               {part.completed}
             </motion.span>
           );
         } else {
-          // Not yet revealed — still show the / or //
           elements.push(
-            <span key={i} className="text-blue-400/70">{part.value}</span>
+            <span key={i} className="text-white/40">
+              {part.value}
+            </span>
           );
         }
         blankIndex++;
@@ -367,28 +332,30 @@ export function HeroAnimation() {
   const p2Visible = p1Filled;
   const p2Filled = phase === "filled-p2" || phase === "done";
 
-  const label =
-    phase === "typing-p1" || phase === "typing-p2"
-      ? "type naturally — use / for blanks, // to fill"
-      : "instant completion";
-
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full">
       <div className="relative">
-          <div className="bg-white/80 backdrop-blur-xl border border-black/[0.06] rounded-2xl px-10 py-9 shadow-[0_4px_30px_rgba(0,0,0,0.06)] font-mono text-[15px] sm:text-[16px] leading-[1.9] tracking-tight text-black/80 h-[260px] sm:h-[240px] overflow-hidden text-left">
+          <div className="bg-transparent text-[13px] sm:text-[14px] leading-[1.8] tracking-normal overflow-hidden text-left">
           <AnimatePresence mode="wait">
             <motion.div
               key={exampleIndex}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.35, ease: "easeInOut" }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
             >
+              <span className="block text-[11px] sm:text-[12px] font-medium tracking-wider uppercase text-white/25 mb-4">
+                {example.title}
+              </span>
               <span className="block">
                 {phase === "typing-p1"
                   ? renderTyping(example.paragraphs[0])
                   : p1Filled
-                  ? renderFilling(example.paragraphs[0], p1FillProgress, "p1")
+                  ? renderFilling(
+                      example.paragraphs[0],
+                      p1FillProgress,
+                      "p1"
+                    )
                   : null}
               </span>
               {p2Visible && (
@@ -396,18 +363,16 @@ export function HeroAnimation() {
                   {phase === "typing-p2"
                     ? renderTyping(example.paragraphs[1])
                     : p2Filled
-                    ? renderFilling(example.paragraphs[1], p2FillProgress, "p2")
+                    ? renderFilling(
+                        example.paragraphs[1],
+                        p2FillProgress,
+                        "p2"
+                      )
                     : null}
                 </span>
               )}
             </motion.div>
           </AnimatePresence>
-        </div>
-
-        <div className="mt-4 flex justify-center">
-          <span className="text-[12px] tracking-widest uppercase text-black/25 font-medium">
-            {label}
-          </span>
         </div>
       </div>
     </div>

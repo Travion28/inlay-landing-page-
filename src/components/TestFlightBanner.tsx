@@ -22,10 +22,10 @@ export function TestFlightBanner() {
         >
           <a
             href="#testflight"
-            className="group flex items-center gap-3.5 px-6 py-3 rounded-full bg-white/40 backdrop-blur-2xl shadow-[0_6px_30px_rgba(0,0,0,0.12)] hover:shadow-[0_10px_40px_rgba(0,0,0,0.18)] hover:bg-white/55 transition-all duration-300"
+            className="group flex items-center gap-3.5 px-6 py-3 rounded-full bg-white/[0.1] backdrop-blur-2xl border border-white/[0.15] shadow-[0_8px_40px_rgba(0,0,0,0.3)] hover:shadow-[0_12px_50px_rgba(0,0,0,0.4)] hover:bg-white/[0.15] transition-all duration-300"
           >
-            {/* TestFlight icon placeholder */}
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center flex-shrink-0">
+            {/* TestFlight icon */}
+            <div className="w-8 h-8 rounded-lg bg-white/[0.12] border border-white/[0.1] flex items-center justify-center flex-shrink-0">
               <svg
                 width="15"
                 height="15"
@@ -35,15 +35,16 @@ export function TestFlightBanner() {
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                className="opacity-60"
               >
                 <path d="M12 19V5M5 12l7-7 7 7" />
               </svg>
             </div>
             <div className="flex flex-col leading-tight">
-              <span className="text-[16px] font-semibold text-black/75 group-hover:text-black/90 transition-colors">
+              <span className="text-[16px] font-semibold text-white/80 group-hover:text-white/95 transition-colors">
                 Join the iOS Beta
               </span>
-              <span className="text-[12px] text-black/35 font-medium">
+              <span className="text-[12px] text-white/30 font-medium">
                 Download with Apple TestFlight
               </span>
             </div>
