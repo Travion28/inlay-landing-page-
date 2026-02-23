@@ -12,6 +12,11 @@ html {
   --card-ratio: 9 / 16;
 }
 
+/* Ensure body fills behind iOS browser bars */
+html, body {
+  height: 100%;
+}
+
 @media (min-width: 640px) {
   html { --card-ratio: 9 / 16; }
 }
@@ -23,6 +28,15 @@ html {
 }
 @media (min-width: 1280px) {
   html { --card-ratio: 3 / 5; }
+}
+
+.hero-section {
+  min-height: calc(100vh + 80px);
+}
+@media (min-width: 640px) {
+  .hero-section {
+    min-height: 100vh;
+  }
 }
 
 body {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface Part {
@@ -13,16 +13,12 @@ interface Paragraph {
 
 interface Example {
   title: string;
-  image: string;
   paragraphs: Paragraph[];
-  // Typo: at charIndex X, type wrong chars then backspace
-  typo?: { at: number; wrong: string };
 }
 
 const EXAMPLES: Example[] = [
   {
     title: "Tesla Earnings Call Notes",
-    image: "bg-1.png",
     paragraphs: [
       {
         parts: [
@@ -55,11 +51,9 @@ const EXAMPLES: Example[] = [
         ],
       },
     ],
-    typo: { at: 22, wrong: "teh" }, // "the" → "teh" then fix
   },
   {
     title: "Super Bowl LIX Recap",
-    image: "bg-2.png",
     paragraphs: [
       {
         parts: [
@@ -92,11 +86,9 @@ const EXAMPLES: Example[] = [
         ],
       },
     ],
-    typo: { at: 35, wrong: "Suoer" }, // "Super" → "Suoer" then fix
   },
   {
     title: "Starship Flight 7",
-    image: "bg-3.png",
     paragraphs: [
       {
         parts: [
@@ -127,22 +119,16 @@ const EXAMPLES: Example[] = [
         ],
       },
     ],
-    typo: { at: 14, wrong: "Starhsip" }, // "Starship" → "Starhsip" then fix
   },
 ];
-
-const base = import.meta.env.BASE_URL;
-export const BACKGROUND_IMAGES = EXAMPLES.map((e) => `${base}${e.image}`);
 
 function getParagraphText(paragraph: Paragraph): string {
   return paragraph.parts.map((p) => p.value).join("");
 }
 
 const TIMING = {
-  typing: 55,       // slower, more human
-  typingJitter: 45,  // random variance
-  backspaceSpeed: 40,
-  typoDelay: 400,   // pause before fixing
+  typing: 55,
+  typingJitter: 45,
   fillDelay: 400,
   blankStagger: 0.25,
   blankDuration: 0.5,
@@ -151,25 +137,12 @@ const TIMING = {
 
 type Phase = "typing-p1" | "typing-p2" | "filled-p2" | "done";
 
-// Typo state machine
-type TypoState = "before" | "typing-wrong" | "pausing" | "backspacing" | "done";
-
-export function HeroAnimation({
-  onExampleChange,
-}: {
-  onExampleChange?: (index: number) => void;
-}) {
+export function HeroAnimation() {
   const [exampleIndex, setExampleIndex] = useState(0);
   const [phase, setPhase] = useState<Phase>("typing-p1");
   const [charIndex, setCharIndex] = useState(0);
   const [p1FillProgress, setP1FillProgress] = useState(-1);
   const [p2FillProgress, setP2FillProgress] = useState(-1);
-
-  // Typo simulation state
-  const [typoState, setTypoState] = useState<TypoState>("before");
-  const [typoCharsTyped, setTypoCharsTyped] = useState(0);
-  const [typoCharsDeleted, setTypoCharsDeleted] = useState(0);
-  const typoFired = useRef(false);
 
   const example = EXAMPLES[exampleIndex];
   const currentParagraph =
@@ -179,70 +152,15 @@ export function HeroAnimation({
   const nextExample = useCallback(() => {
     const next = (exampleIndex + 1) % EXAMPLES.length;
     setExampleIndex(next);
-    onExampleChange?.(next);
     setPhase("typing-p1");
     setCharIndex(0);
     setP1FillProgress(-1);
     setP2FillProgress(-1);
-    setTypoState("before");
-    setTypoCharsTyped(0);
-    setTypoCharsDeleted(0);
-    typoFired.current = false;
-  }, [exampleIndex, onExampleChange]);
+  }, [exampleIndex]);
 
-  // Typo logic — only fires in typing-p1
-  const typo = example.typo;
-  const typoActive =
-    phase === "typing-p1" && typo && typoState !== "done" && typoState !== "before";
-
-  useEffect(() => {
-    if (phase !== "typing-p1" || !typo || typoFired.current) return;
-    if (charIndex === typo.at && typoState === "before") {
-      typoFired.current = true;
-      setTypoState("typing-wrong");
-    }
-  }, [charIndex, phase, typo, typoState]);
-
-  // Type wrong chars
-  useEffect(() => {
-    if (typoState !== "typing-wrong" || !typo) return;
-    if (typoCharsTyped < typo.wrong.length) {
-      const timer = setTimeout(
-        () => setTypoCharsTyped((c) => c + 1),
-        TIMING.typing + Math.random() * TIMING.typingJitter
-      );
-      return () => clearTimeout(timer);
-    } else {
-      const timer = setTimeout(() => setTypoState("pausing"), 100);
-      return () => clearTimeout(timer);
-    }
-  }, [typoState, typoCharsTyped, typo]);
-
-  // Pause then backspace
-  useEffect(() => {
-    if (typoState !== "pausing" || !typo) return;
-    const timer = setTimeout(() => setTypoState("backspacing"), TIMING.typoDelay);
-    return () => clearTimeout(timer);
-  }, [typoState, typo]);
-
-  // Backspace wrong chars
-  useEffect(() => {
-    if (typoState !== "backspacing" || !typo) return;
-    if (typoCharsDeleted < typo.wrong.length) {
-      const timer = setTimeout(
-        () => setTypoCharsDeleted((c) => c + 1),
-        TIMING.backspaceSpeed
-      );
-      return () => clearTimeout(timer);
-    } else {
-      setTypoState("done");
-    }
-  }, [typoState, typoCharsDeleted, typo]);
-
-  // Main typing — pauses during typo
+  // Main typing
   useEffect(() => {
     if (phase !== "typing-p1" && phase !== "typing-p2") return;
-    if (typoActive) return; // wait for typo to finish
 
     if (charIndex < currentText.length) {
       const timer = setTimeout(
@@ -266,7 +184,7 @@ export function HeroAnimation({
         return () => clearTimeout(timer);
       }
     }
-  }, [phase, charIndex, currentText.length, typoActive]);
+  }, [phase, charIndex, currentText.length]);
 
   // Sequentially reveal p1 blanks
   useEffect(() => {
@@ -316,7 +234,7 @@ export function HeroAnimation({
     return () => clearTimeout(timer);
   }, [phase, nextExample]);
 
-  const renderTyping = (paragraph: Paragraph, isP1: boolean) => {
+  const renderTyping = (paragraph: Paragraph) => {
     let pos = 0;
     const elements: React.ReactNode[] = [];
 
@@ -344,21 +262,6 @@ export function HeroAnimation({
         );
       }
       pos = partEnd;
-    }
-
-    // Show typo chars if active and this is p1
-    if (isP1 && typo && typoState !== "before" && typoState !== "done") {
-      const visibleWrong =
-        typoState === "backspacing"
-          ? typo.wrong.slice(0, typo.wrong.length - typoCharsDeleted)
-          : typo.wrong.slice(0, typoCharsTyped);
-      if (visibleWrong) {
-        elements.push(
-          <span key="typo" className="text-white/90">
-            {visibleWrong}
-          </span>
-        );
-      }
     }
 
     elements.push(
@@ -432,7 +335,7 @@ export function HeroAnimation({
   return (
     <div className="w-full">
       <div className="relative">
-        <div className="bg-black/20 backdrop-blur-md border border-white/[0.08] rounded-2xl px-5 py-4 text-[13px] sm:text-[14px] leading-[1.8] tracking-normal overflow-hidden text-left">
+          <div className="bg-transparent text-[13px] sm:text-[14px] leading-[1.8] tracking-normal overflow-hidden text-left">
           <AnimatePresence mode="wait">
             <motion.div
               key={exampleIndex}
@@ -446,7 +349,7 @@ export function HeroAnimation({
               </span>
               <span className="block">
                 {phase === "typing-p1"
-                  ? renderTyping(example.paragraphs[0], true)
+                  ? renderTyping(example.paragraphs[0])
                   : p1Filled
                   ? renderFilling(
                       example.paragraphs[0],
@@ -458,7 +361,7 @@ export function HeroAnimation({
               {p2Visible && (
                 <span className="block mt-4">
                   {phase === "typing-p2"
-                    ? renderTyping(example.paragraphs[1], false)
+                    ? renderTyping(example.paragraphs[1])
                     : p2Filled
                     ? renderFilling(
                         example.paragraphs[1],
