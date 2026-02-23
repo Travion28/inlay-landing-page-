@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import { HeroAnimation } from "./HeroAnimation";
 
@@ -9,6 +9,18 @@ export function Hero({ heroVideos, ctaRef }: { heroVideos: string[]; ctaRef: Rea
   const handleEnded = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % heroVideos.length);
   }, [heroVideos.length]);
+
+  useEffect(() => {
+    videoRefs.forEach((ref, i) => {
+      if (!ref.current) return;
+      if (i === activeIndex) {
+        ref.current.currentTime = 0;
+        ref.current.play();
+      } else {
+        ref.current.pause();
+      }
+    });
+  }, [activeIndex]);
 
   return (
     <section className="hero-section relative flex flex-col overflow-hidden z-10" style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.7), 0 8px 20px rgba(0,0,0,0.5)' }}>
@@ -24,7 +36,6 @@ export function Hero({ heroVideos, ctaRef }: { heroVideos: string[]; ctaRef: Rea
           muted
           playsInline
           onEnded={handleEnded}
-          onCanPlay={() => { if (i === activeIndex) videoRefs[i].current?.play(); }}
           className={`absolute inset-0 w-full h-full object-cover z-0 transition-opacity duration-1000 ${
             i === activeIndex ? "opacity-100" : "opacity-0"
           }`}
